@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Organizador de Monaguillos v5</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Organización de Monaguillos</h1>
+        <p>Guía litúrgica para la asignación de actividades</p>
+    </div>
+
+    <div class="section">
+        <h2>1. Registrar Monaguillos</h2>
+        
+        <div class="quick-add">
+            <h3>Plantilla Rápida</h3>
+            <p>Agrega niños rápidamente en orden de llegada sin escribir nombres:</p>
+            <div class="btn-group">
+                <button class="btn-outline" onclick="addAnonymousKid('chico')">+ Monaguillo Chico</button>
+                <button class="btn-outline" onclick="addAnonymousKid('grande')">+ Monaguillo Grande</button>
+            </div>
+        </div>
+        
+        <div class="manual-add">
+            <h3>O ingreso manual:</h3>
+            <div class="form-group">
+                <input type="text" id="kidName" placeholder="Nombre (opcional)">
+                <select id="kidSize">
+                    <option value="chico">Niño Chico</option>
+                    <option value="grande">Niño Grande</option>
+                </select>
+                <button onclick="addKid()">Agregar</button>
+            </div>
+        </div>
+        <div id="kidsList"></div>
+    </div>
+
+    <div class="section">
+        <h2>2. Objetos Litúrgicos a Utilizar</h2>
+        <div class="grid-checkboxes" id="objectsList">
+            <!-- Generado dinámicamente por JS -->
+        </div>
+    </div>
+
+    <div class="section" style="border: none;">
+        <button id="btnAssign" onclick="assignTasks()" class="btn-primary" style="width:100%; font-size:1.1rem; padding:15px;">
+            Generar Asignación Automática
+        </button>
+        
+        <div id="resultsContainer" style="display: none; margin-top: 25px;">
+            <h2 style="text-align:center; margin-bottom: 20px;">Asignación Final</h2>
+            <div id="resultsBody" class="results-grid"></div>
+        </div>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+</html>

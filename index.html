@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Organizador de Monaguillos v5</title>
+    <title>Organizador de Monaguillos v10</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -20,8 +20,9 @@
             <h3>Plantilla Rápida</h3>
             <p>Agrega niños rápidamente en orden de llegada sin escribir nombres:</p>
             <div class="btn-group">
-                <button class="btn-outline" onclick="addAnonymousKid('chico')">+ Monaguillo Chico</button>
-                <button class="btn-outline" onclick="addAnonymousKid('grande')">+ Monaguillo Grande</button>
+                <button class="btn-outline" onclick="addAnonymousKid('chico')">+ Chico</button>
+                <button class="btn-outline" onclick="addAnonymousKid('grande')">+ Grande</button>
+                <button class="btn-outline" onclick="addAnonymousKid('grande_incienso')" title="Se le dará prioridad para el Incensario">+ Grande (Sabe Incensar)</button>
             </div>
         </div>
         
@@ -32,6 +33,7 @@
                 <select id="kidSize">
                     <option value="chico">Niño Chico</option>
                     <option value="grande">Niño Grande</option>
+                    <option value="grande_incienso">Niño Grande (Sabe Incensar)</option>
                 </select>
                 <button onclick="addKid()">Agregar</button>
             </div>

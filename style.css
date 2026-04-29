@@ -164,6 +164,12 @@ button {
     font-weight: 500;
 }
 
+.kid-tag.expert {
+    background: #fff9ed;
+    border-color: #fce8c5;
+    color: #b45309;
+}
+
 .results-grid {
     display: grid;
     grid-template-columns: 1fr;

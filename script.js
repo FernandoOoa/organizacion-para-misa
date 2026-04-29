@@ -1,8 +1,7 @@
 let kids = [];
 let anonCounter = 1;
-let assignOrder = 0; // Variable global para rastrear el turno exacto de asignación
+let assignOrder = 0; 
 
-// --- LIBRERÍA DE ICONOS SVG INTEGRADOS ---
 const liturgicalIcons = {
     caliz: '<svg viewBox="0 0 100 100" class="lit-icon" fill="currentColor"><path d="M50,75 C65,75 75,65 75,50 L75,20 C75,14 64,10 50,10 C36,10 25,14 25,20 L25,50 C25,65 35,75 50,75 Z M30,50 L30,22 C30,20 39,15 50,15 C61,15 70,20 70,22 L70,50 C70,60 61,68 50,68 C39,68 30,60 30,50 Z M45,75 L40,85 C35,85 25,87 25,90 L75,90 C75,87 65,85 60,85 L55,75 L45,75 Z"/></svg>',
     copon: '<svg viewBox="0 0 100 100" class="lit-icon" fill="currentColor"><path d="M50,10 C40,10 30,12 30,15 L30,55 C30,65 39,72 50,72 C61,72 70,65 70,55 L70,15 C70,12 60,10 50,10 Z M35,18 C35,16 42,13 50,13 C58,13 65,16 65,18 L65,52 C65,58 58,63 50,63 C42,63 35,58 35,52 L35,18 Z M45,72 L40,82 C35,82 20,84 20,87 L80,87 C80,84 65,82 60,82 L55,72 Z"/></svg>',
@@ -65,10 +64,13 @@ function addKid() {
 }
 
 function updateKidsUI() {
-    document.getElementById('kidsList').innerHTML = kids.map((k, i) => 
-        `<span class="kid-tag">${k.name} (${k.size}) 
-         <span style="cursor:pointer; margin-left:8px; font-weight:bold" onclick="kids.splice(${i},1);updateKidsUI()">×</span></span>`
-    ).join('');
+    document.getElementById('kidsList').innerHTML = kids.map((k, i) => {
+        let displayLabel = k.size === 'grande_incienso' ? 'Grande (Incienso)' : (k.size === 'grande' ? 'Grande' : 'Chico');
+        let expertClass = k.size === 'grande_incienso' ? 'expert' : '';
+        
+        return `<span class="kid-tag ${expertClass}">${k.name} (${displayLabel}) 
+         <span style="cursor:pointer; margin-left:8px; font-weight:bold" onclick="kids.splice(${i},1);updateKidsUI()">×</span></span>`;
+    }).join('');
 }
 
 function getFairKid(kidArray) {
@@ -89,11 +91,13 @@ function getFairKid(kidArray) {
 function assignTasks() {
     if (kids.length === 0) return alert("Por favor, registra al menos un monaguillo.");
     
-    assignOrder = 0; // Reiniciamos el contador global
+    assignOrder = 0; 
     
     kids.forEach(k => {
         k.tasks = [];
         k.lastAssigned = 0;
+        k.locked = false;
+        k.isIncensarioRestricted = false; // Nueva bandera
     });
 
     const selectedIds = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
@@ -104,39 +108,145 @@ function assignTasks() {
         activeTasks = activeTasks.filter(t => t.id !== 'Evangelio');
     }
 
-    const grandes = kids.filter(k => k.size === 'grande');
-    const chicos = kids.filter(k => k.size === 'chico');
-    const todos = [...kids];
+    // 1. PRE-ASIGNACIÓN: Ciriales exclusivos
+    if (hasCiriales && kids.length >= 6) {
+        let validForCirial = kids.filter(k => k.size === 'grande');
+        if (validForCirial.length === 0) {
+            validForCirial = kids.filter(k => k.size === 'grande_incienso');
+        }
+
+        if (validForCirial.length >= 2) {
+            let c1 = validForCirial[validForCirial.length - 1]; 
+            let c2 = validForCirial[validForCirial.length - 2]; 
+            c1.tasks.push("Cirial 1");
+            c2.tasks.push("Cirial 2");
+            c1.locked = true;
+            c2.locked = true;
+        } else if (validForCirial.length === 1) {
+            let c1 = validForCirial[0];
+            c1.tasks.push("Cirial 1");
+            c1.tasks.push("Cirial 2");
+            c1.locked = true;
+        }
+    }
+
+    // 2. PRE-ASIGNACIÓN: Incensario restringido (solo incensario y platillo opcional)
+    let kIncensarioGlobal = null;
+    const hasIncensario = activeTasks.some(t => t.id === 'IncensarioNaveta');
+    
+    if (hasIncensario && kids.length >= 6) {
+        let disponiblesIncienso = kids.filter(k => !k.locked);
+        let expertos = disponiblesIncienso.filter(k => k.size === 'grande_incienso');
+        if (expertos.length === 0) {
+            expertos = disponiblesIncienso.filter(k => k.size === 'grande');
+        }
+        
+        if (expertos.length > 0) {
+            kIncensarioGlobal = expertos[0];
+            kIncensarioGlobal.tasks.push("Incensario");
+            kIncensarioGlobal.lastAssigned = ++assignOrder;
+            kIncensarioGlobal.isIncensarioRestricted = true; // Se le bloquea para todo MENOS para Platillos
+        }
+    }
+
+    // Filtros base
+    const disponibles = kids.filter(k => !k.locked);
+    // filterRestricted excluye al incensario de tareas normales
+    const filterRestricted = (arr) => arr.filter(k => !k.isIncensarioRestricted);
+    
+    const grandes = disponibles.filter(k => k.size === 'grande' || k.size === 'grande_incienso');
+    const chicos = disponibles.filter(k => k.size === 'chico');
+    const todos = [...disponibles];
 
     activeTasks.forEach(task => {
-        if (task.rules === 'multiple') {
-            const qty = parseInt(document.getElementById(`qty_${task.id}`).value) || 1;
+        if (task.rules === 'multiple') { 
+            let maxQty = todos.length;
+            let qty = parseInt(document.getElementById(`qty_${task.id}`).value) || 1;
+            
+            if (qty > maxQty) {
+                qty = maxQty;
+            }
+
+            // Para los platillos SI incluimos al niño del incensario restringido
+            let candidatosPlatillo = [...todos]; 
+
             for(let i=0; i < qty; i++) {
-                const k = getFairKid(grandes);
-                if(k) k.tasks.push(qty > 1 ? `${task.name} ${i+1}` : task.name);
+                let grandesSinPlatillo = candidatosPlatillo.filter(k => k.size === 'grande' || k.size === 'grande_incienso');
+                
+                let k = null;
+                if (grandesSinPlatillo.length > 0) {
+                    k = getFairKid(grandesSinPlatillo);
+                } else {
+                    k = getFairKid(candidatosPlatillo);
+                }
+
+                if(k) {
+                    k.tasks.push(qty > 1 ? `${task.name} ${i+1}` : task.name);
+                    candidatosPlatillo = candidatosPlatillo.filter(niño => niño !== k);
+                }
             }
         } 
         else if (task.rules === 'solo_grandes') {
-            const k = getFairKid(grandes);
+            const k = getFairKid(filterRestricted(grandes));
             if(k) k.tasks.push(task.name);
         } 
         else if (task.rules === 'solo_grandes_combo') {
-            const k = getFairKid(grandes);
-            if(k) k.tasks.push("Incensario y Naveta");
+            if (kIncensarioGlobal) {
+                // Si el incensario ya se asignó arriba, aquí solo repartimos la Naveta
+                let validNavetaKids = filterRestricted(todos).filter(k => 
+                    !k.tasks.includes("Campanada 1") && 
+                    !k.tasks.includes("Vinajeras (lleva y recoge)")
+                );
+
+                if (validNavetaKids.length === 0) {
+                    validNavetaKids = filterRestricted(todos);
+                }
+
+                const kNaveta = getFairKid(validNavetaKids);
+                if(kNaveta) kNaveta.tasks.push("Naveta");
+
+            } else {
+                // Lógica normal para cuando hay menos de 6 niños
+                let expertosIncienso = filterRestricted(disponibles).filter(k => k.size === 'grande_incienso');
+                if (expertosIncienso.length === 0) {
+                    expertosIncienso = filterRestricted(grandes);
+                }
+                const kIncensario = getFairKid(expertosIncienso);
+                if(kIncensario) kIncensario.tasks.push("Incensario");
+
+                let validNavetaKids = filterRestricted(todos).filter(k => 
+                    !k.tasks.includes("Campanada 1") && 
+                    !k.tasks.includes("Vinajeras (lleva y recoge)") &&
+                    k !== kIncensario 
+                );
+
+                if (validNavetaKids.length === 0) {
+                    validNavetaKids = filterRestricted(todos).filter(k => k !== kIncensario);
+                }
+
+                const kNaveta = getFairKid(validNavetaKids);
+                if(kNaveta) kNaveta.tasks.push("Naveta");
+            }
         }
         else if (task.rules === 'solo_grandes_doble') {
-            const c1 = getFairKid(grandes);
-            if(c1) c1.tasks.push("Cirial 1");
-            const c2 = getFairKid(grandes) || c1;
-            if(c2 && c2 !== c1) c2.tasks.push("Cirial 2");
-            else if(c1) c1.tasks.push("Cirial 2");
+            if (kids.length < 6) {
+                const c1 = getFairKid(filterRestricted(grandes));
+                if(c1) c1.tasks.push("Cirial 1");
+                const c2 = getFairKid(filterRestricted(grandes)) || c1;
+                if(c2 && c2 !== c1) c2.tasks.push("Cirial 2");
+                else if(c1) c1.tasks.push("Cirial 2");
+            }
         }
         else if (task.rules === 'evangelio') {
-            let gSorted = [...grandes].sort((a,b) => {
+            let gSorted = [...filterRestricted(grandes)].sort((a,b) => {
                 if (a.tasks.length !== b.tasks.length) return a.tasks.length - b.tasks.length;
                 return (a.lastAssigned || 0) - (b.lastAssigned || 0);
             });
-            let cSorted = [...chicos].sort((a,b) => {
+            let cSorted = [...filterRestricted(chicos)].sort((a,b) => {
+                if (a.tasks.length !== b.tasks.length) return a.tasks.length - b.tasks.length;
+                return (a.lastAssigned || 0) - (b.lastAssigned || 0);
+            });
+            let tSorted = [...filterRestricted(todos)].sort((a,b) => {
                 if (a.tasks.length !== b.tasks.length) return a.tasks.length - b.tasks.length;
                 return (a.lastAssigned || 0) - (b.lastAssigned || 0);
             });
@@ -151,38 +261,31 @@ function assignTasks() {
                 cSorted[0].lastAssigned = ++assignOrder;
                 cSorted[1].tasks.push("Evangelio 2");
                 cSorted[1].lastAssigned = ++assignOrder;
-            } else if (todos.length >= 2) {
-                let tSorted = [...todos].sort((a,b) => {
-                    if (a.tasks.length !== b.tasks.length) return a.tasks.length - b.tasks.length;
-                    return (a.lastAssigned || 0) - (b.lastAssigned || 0);
-                });
+            } else if (tSorted.length >= 2) {
                 tSorted[0].tasks.push("Evangelio 1");
                 tSorted[0].lastAssigned = ++assignOrder;
                 tSorted[1].tasks.push("Evangelio 2");
                 tSorted[1].lastAssigned = ++assignOrder;
-            } else if (todos.length === 1) {
-                todos[0].tasks.push("Evangelio");
-                todos[0].lastAssigned = ++assignOrder;
+            } else if (tSorted.length === 1) {
+                tSorted[0].tasks.push("Evangelio");
+                tSorted[0].lastAssigned = ++assignOrder;
             }
         }
         else if (task.rules === 'combo_lavabo') {
-            if (kids.length === 1) {
-                kids[0].tasks.push("Piscina, Manutergio y Jarra");
-                kids[0].lastAssigned = ++assignOrder;
-            } else if (kids.length === 2) {
-                let tSorted = [...todos].sort((a,b) => {
-                    if (a.tasks.length !== b.tasks.length) return a.tasks.length - b.tasks.length;
-                    return (a.lastAssigned || 0) - (b.lastAssigned || 0);
-                });
+            let tSorted = [...filterRestricted(todos)].sort((a,b) => {
+                if (a.tasks.length !== b.tasks.length) return a.tasks.length - b.tasks.length;
+                return (a.lastAssigned || 0) - (b.lastAssigned || 0);
+            });
+            
+            if (tSorted.length === 1) {
+                tSorted[0].tasks.push("Piscina, Manutergio y Jarra");
+                tSorted[0].lastAssigned = ++assignOrder;
+            } else if (tSorted.length === 2) {
                 tSorted[0].tasks.push("Piscina y Manutergio"); 
                 tSorted[0].lastAssigned = ++assignOrder;
                 tSorted[1].tasks.push("Jarra");
                 tSorted[1].lastAssigned = ++assignOrder;
-            } else {
-                let tSorted = [...todos].sort((a,b) => {
-                    if (a.tasks.length !== b.tasks.length) return a.tasks.length - b.tasks.length;
-                    return (a.lastAssigned || 0) - (b.lastAssigned || 0);
-                });
+            } else if (tSorted.length >= 3) {
                 tSorted[0].tasks.push("Piscina"); 
                 tSorted[0].lastAssigned = ++assignOrder;
                 tSorted[1].tasks.push("Manutergio"); 
@@ -192,7 +295,7 @@ function assignTasks() {
             }
         } 
         else {
-            const k = getFairKid(todos);
+            const k = getFairKid(filterRestricted(todos));
             if(k) k.tasks.push(task.rules === 'vinajeras' ? 'Vinajeras (lleva y recoge)' : task.name);
         }
     });

@@ -112,7 +112,7 @@ function assignTasks() {
         if (task.rules === 'multiple') {
             const qty = parseInt(document.getElementById(`qty_${task.id}`).value) || 1;
             for(let i=0; i < qty; i++) {
-                const k = getFairKid(todos);
+                const k = getFairKid(grandes);
                 if(k) k.tasks.push(qty > 1 ? `${task.name} ${i+1}` : task.name);
             }
         } 

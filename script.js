@@ -97,7 +97,7 @@ function assignTasks() {
         k.tasks = [];
         k.lastAssigned = 0;
         k.locked = false;
-        k.isIncensarioRestricted = false; // Nueva bandera
+        k.isIncensarioRestricted = false;
     });
 
     const selectedIds = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
@@ -108,7 +108,6 @@ function assignTasks() {
         activeTasks = activeTasks.filter(t => t.id !== 'Evangelio');
     }
 
-    // 1. PRE-ASIGNACIÓN: Ciriales exclusivos
     if (hasCiriales && kids.length >= 6) {
         let validForCirial = kids.filter(k => k.size === 'grande');
         if (validForCirial.length === 0) {
@@ -130,7 +129,6 @@ function assignTasks() {
         }
     }
 
-    // 2. PRE-ASIGNACIÓN: Incensario restringido (solo incensario y platillo opcional)
     let kIncensarioGlobal = null;
     const hasIncensario = activeTasks.some(t => t.id === 'IncensarioNaveta');
     
@@ -145,13 +143,11 @@ function assignTasks() {
             kIncensarioGlobal = expertos[0];
             kIncensarioGlobal.tasks.push("Incensario");
             kIncensarioGlobal.lastAssigned = ++assignOrder;
-            kIncensarioGlobal.isIncensarioRestricted = true; // Se le bloquea para todo MENOS para Platillos
+            kIncensarioGlobal.isIncensarioRestricted = true; 
         }
     }
 
-    // Filtros base
     const disponibles = kids.filter(k => !k.locked);
-    // filterRestricted excluye al incensario de tareas normales
     const filterRestricted = (arr) => arr.filter(k => !k.isIncensarioRestricted);
     
     const grandes = disponibles.filter(k => k.size === 'grande' || k.size === 'grande_incienso');
@@ -167,7 +163,6 @@ function assignTasks() {
                 qty = maxQty;
             }
 
-            // Para los platillos SI incluimos al niño del incensario restringido
             let candidatosPlatillo = [...todos]; 
 
             for(let i=0; i < qty; i++) {
@@ -192,7 +187,6 @@ function assignTasks() {
         } 
         else if (task.rules === 'solo_grandes_combo') {
             if (kIncensarioGlobal) {
-                // Si el incensario ya se asignó arriba, aquí solo repartimos la Naveta
                 let validNavetaKids = filterRestricted(todos).filter(k => 
                     !k.tasks.includes("Campanada 1") && 
                     !k.tasks.includes("Vinajeras (lleva y recoge)")
@@ -206,7 +200,6 @@ function assignTasks() {
                 if(kNaveta) kNaveta.tasks.push("Naveta");
 
             } else {
-                // Lógica normal para cuando hay menos de 6 niños
                 let expertosIncienso = filterRestricted(disponibles).filter(k => k.size === 'grande_incienso');
                 if (expertosIncienso.length === 0) {
                     expertosIncienso = filterRestricted(grandes);

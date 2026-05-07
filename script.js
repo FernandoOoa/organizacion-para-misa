@@ -123,6 +123,9 @@ function assignTasks() {
         if (validForCirial.length === 0) {
             validForCirial = kids.filter(k => k.size === 'grande_incienso');
         }
+        if (validForCirial.length === 0) {
+            validForCirial = kids; // Fallback: cualquiera si no hay grandes
+        }
 
         if (validForCirial.length >= 2) {
             let c1 = validForCirial[validForCirial.length - 1]; 
@@ -147,6 +150,9 @@ function assignTasks() {
         let expertos = disponiblesIncienso.filter(k => k.size === 'grande_incienso');
         if (expertos.length === 0) {
             expertos = disponiblesIncienso.filter(k => k.size === 'grande');
+        }
+        if (expertos.length === 0) {
+            expertos = disponiblesIncienso; // Fallback: cualquiera si no hay grandes
         }
         
         if (expertos.length > 0) {
@@ -192,7 +198,8 @@ function assignTasks() {
             }
         } 
         else if (task.rules === 'solo_grandes') {
-            const k = getFairKid(filterRestricted(grandes));
+            let k = getFairKid(filterRestricted(grandes));
+            if (!k) k = getFairKid(filterRestricted(todos)); // Fallback a cualquiera si no hay grandes
             if(k) k.tasks.push(task.name);
         } 
         else if (task.rules === 'solo_grandes_combo') {
@@ -214,6 +221,9 @@ function assignTasks() {
                 if (expertosIncienso.length === 0) {
                     expertosIncienso = filterRestricted(grandes);
                 }
+                if (expertosIncienso.length === 0) {
+                    expertosIncienso = filterRestricted(todos); // Fallback: cualquiera si no hay grandes
+                }
                 const kIncensario = getFairKid(expertosIncienso);
                 if(kIncensario) kIncensario.tasks.push("Incensario");
 
@@ -233,9 +243,12 @@ function assignTasks() {
         }
         else if (task.rules === 'solo_grandes_doble') {
             if (kids.length < 6) {
-                const c1 = getFairKid(filterRestricted(grandes));
+                let candidatos = filterRestricted(grandes);
+                if (candidatos.length === 0) candidatos = filterRestricted(todos); // Fallback
+                
+                const c1 = getFairKid(candidatos);
                 if(c1) c1.tasks.push("Cirial 1");
-                const c2 = getFairKid(filterRestricted(grandes)) || c1;
+                const c2 = getFairKid(candidatos.filter(k => k !== c1)) || c1;
                 if(c2 && c2 !== c1) c2.tasks.push("Cirial 2");
                 else if(c1) c1.tasks.push("Cirial 2");
             }

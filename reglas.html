@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual y Reglas - Organizador de Monaguillos</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- PWA Meta Tags -->
+    <meta name="theme-color" content="#9B1B30">
+    <style>
+        .rule-list { list-style-type: disc; padding-left: 20px; line-height: 1.6; }
+        .rule-list li { margin-bottom: 12px; }
+        .badge-preview { font-size: 0.75rem; padding: 4px 8px; border-radius: 12px; font-weight: 500; display: inline-block; margin-right: 8px; width: 120px; text-align: center;}
+        .badge-chico { background-color: #ebf8ff; color: #2b6cb0; border: 1px solid #bee3f8; }
+        .badge-grande { background-color: #f0fff4; color: #2f855a; border: 1px solid #c6f6d5; }
+        .badge-expert { background-color: #fff9ed; color: #b45309; border: 1px solid #fce8c5; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>Manual de Uso y Reglas</h1>
+        <p>Guía de funcionamiento de la aplicación</p>
+        <div style="margin-top: 15px;">
+            <a href="index.html" class="btn-outline" style="text-decoration: none; display: inline-block; padding: 8px 15px; border-radius: 20px;">⬅ Volver a la Organización</a>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2>1. Categorías de Monaguillos</h2>
+        <p style="margin-bottom: 15px;">Al registrar a los niños, se dividen en 3 perfiles que el algoritmo toma en cuenta para asignar tareas de forma segura:</p>
+        <ul class="rule-list" style="list-style-type: none; padding-left: 0;">
+            <li><span class="badge-preview badge-chico">Chico</span> <strong>Niño Chico:</strong> Para tareas sencillas como Campanadas, Platillo, Vinajeras o Lavabo. Si faltan monaguillos grandes, sirven como respaldo para tareas complejas.</li>
+            <li><span class="badge-preview badge-grande">Grande</span> <strong>Niño Grande:</strong> Monaguillos con más fuerza, altura o experiencia. Tienen prioridad automática para llevar la Cruz Alta, Ciriales y el Libro.</li>
+            <li><span class="badge-preview badge-expert">Grande (Incienso)</span> <strong>Experto en Incienso:</strong> Perfil especial. El sistema los buscará automáticamente cuando se marque la casilla del Incensario y la Naveta.</li>
+        </ul>
+    </div>
+
+    <div class="section">
+        <h2>2. Reglas del Algoritmo Automático</h2>
+        <p style="margin-bottom: 15px;">El botón de <em>"Generar Asignación Automática"</em> no reparte las tareas al azar, sigue estrictas normas litúrgicas y de equidad:</p>
+        <ul class="rule-list">
+            <li><strong>Justicia y Equidad:</strong> El sistema siempre intenta dar el mismo número de tareas a todos. Si un niño no tiene tareas asignadas, será el primero en la fila para recibir la siguiente.</li>
+            <li><strong>Ciriales:</strong> Solo se asignan a "Grandes". Si hay más de 6 niños en total, los que lleven los ciriales serán "bloqueados" temporalmente y no recibirán más tareas (como vinajeras o lavabo), ya que deben estar listos en todo momento.</li>
+            <li><strong>Incensario y Naveta:</strong> El algoritmo busca primero a un experto para el Incensario. La Naveta se le asigna a otro monaguillo asegurándose de que NO esté ocupado con las Vinajeras o la Campana 1 (para evitar conflictos de tiempo durante la misa).</li>
+            <li><strong>Combo Lavabo:</strong> Es dinámico. Si hay pocos niños, un solo monaguillo se encarga de todo (Piscina, Manutergio y Jarra). Si hay muchos niños disponibles, el sistema inteligentemente divide estos objetos entre 2 o 3 niños distintos.</li>
+            <li><strong>Acompañantes del Evangelio:</strong> Busca emparejar a los niños por tamaño (dos grandes o dos chicos) para que se vean uniformes y simétricos al acompañar la lectura del sacerdote.</li>
+            <li><strong>Plan de Respaldo Seguro (Fallbacks):</strong> ¡El sistema nunca falla! Si una tarea requiere estrictamente a un niño "Grande" (ej. la Cruz Alta) pero ese día solo asistieron "Chicos", el algoritmo usará su plan de contingencia y asignará la tarea al chico más apto en lugar de dejar el objeto sin monaguillo.</li>
+        </ul>
+    </div>
+
+    <div class="section" style="border: none;">
+        <h2>3. Ajustes Manuales (Drag & Drop)</h2>
+        <p>¿Hubo un imprevisto de última hora? El sistema es completamente flexible.</p>
+        <p>En las tarjetas de resultados, cada tarea tiene un icono <span style="color: #a0aec0;">⣿</span> a la izquierda. Puedes hacer clic, mantener presionado y <strong>arrastrar cualquier tarea</strong> de un monaguillo a otro.</p>
+        <p>Al soltar la tarea en el recuadro de otro niño, la lista se actualizará inmediatamente. Solo recuerda fijarte en los colores de las etiquetas de cada niño (azul, verde o naranja) para asegurarte de no asignarle manualmente una tarea muy pesada a un monaguillo "Chico".</p>
+    </div>
+</div>
+</body>
+</html>

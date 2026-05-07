@@ -278,30 +278,32 @@ function drop(ev) {
 }
 
 // ------------------------------------------------------------
-// Mobile touch drag‑and‑drop support
-let touchDragTask = null;
-let touchDragFromKidIndex = null;
-let ghostElement = null;
-let isDragging = false;
-let touchDragStartX = 0;
-let touchDragStartY = 0;
+// Unified pointer drag‑and‑drop (mouse, touch, pen)
+let pointerDragTask = null;
+let pointerDragFromKidIndex = null;
+let pointerStartX = 0;
+let pointerStartY = 0;
+let isPointerDragging = false;
 
-document.addEventListener('touchstart', ev => {
+// Start pointer interaction
+document.addEventListener('pointerdown', ev => {
     const li = ev.target.closest('.draggable-task');
     if (!li) return;
-    touchDragTask = li.dataset.task;
-    touchDragFromKidIndex = parseInt(li.dataset.kidIndex);
-    touchDragStartX = ev.touches[0].clientX;
-    touchDragStartY = ev.touches[0].clientY;
-}, { passive: true });
+    pointerDragTask = li.dataset.task;
+    pointerDragFromKidIndex = parseInt(li.dataset.kidIndex);
+    pointerStartX = ev.clientX;
+    pointerStartY = ev.clientY;
+    // Capture subsequent moves even if pointer leaves the element
+    ev.target.setPointerCapture(ev.pointerId);
+});
 
-document.addEventListener('touchmove', ev => {
-    if (!touchDragTask) return;
-    const touch = ev.touches[0];
-    if (!isDragging) {
-        if (Math.abs(touch.clientX - touchDragStartX) > 10 || Math.abs(touch.clientY - touchDragStartY) > 10) {
-            isDragging = true;
-            const li = document.querySelector(`.draggable-task[data-task="${CSS.escape(touchDragTask)}"][data-kid-index="${touchDragFromKidIndex}"]`);
+// Move pointer
+document.addEventListener('pointermove', ev => {
+    if (!pointerDragTask) return;
+    if (!isPointerDragging) {
+        if (Math.abs(ev.clientX - pointerStartX) > 8 || Math.abs(ev.clientY - pointerStartY) > 8) {
+            isPointerDragging = true;
+            const li = document.querySelector(`.draggable-task[data-task="${CSS.escape(pointerDragTask)}"][data-kid-index="${pointerDragFromKidIndex}"]`);
             if (!li) return;
             const rect = li.getBoundingClientRect();
             ghostElement = li.cloneNode(true);
@@ -317,53 +319,40 @@ document.addEventListener('touchmove', ev => {
             ghostElement.style.border = '1px solid var(--border)';
             document.body.appendChild(ghostElement);
         } else {
-            return;
+            return; // not enough movement yet
         }
     }
     ev.preventDefault();
-    moveGhost(touch);
-    const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    moveGhost(ev);
+    const dropTarget = document.elementFromPoint(ev.clientX, ev.clientY);
     document.querySelectorAll('.task-dropzone.drag-over').forEach(el => el.classList.remove('drag-over'));
     if (dropTarget) {
         const dropzone = dropTarget.closest('.task-dropzone');
         if (dropzone) dropzone.classList.add('drag-over');
     }
-}, { passive: false });
+});
 
-function moveGhost(touch) {
-    if (!ghostElement) return;
-    ghostElement.style.left = (touch.clientX - ghostElement.offsetWidth / 2) + 'px';
-    ghostElement.style.top = (touch.clientY - ghostElement.offsetHeight / 2) + 'px';
-}
-
-document.addEventListener('touchend', ev => {
+// End pointer interaction
+document.addEventListener('pointerup', ev => {
     if (ghostElement) { ghostElement.remove(); ghostElement = null; }
-    if (isDragging) {
-        const touch = ev.changedTouches[0];
-        const dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (isPointerDragging) {
+        const dropTarget = document.elementFromPoint(ev.clientX, ev.clientY);
         const dropzone = dropTarget ? dropTarget.closest('.task-dropzone') : null;
         if (dropzone) {
             const toKidIndex = parseInt(dropzone.dataset.kidIndex);
-            if (touchDragFromKidIndex !== toKidIndex) {
-                const idx = kids[touchDragFromKidIndex].tasks.indexOf(touchDragTask);
+            if (pointerDragFromKidIndex !== toKidIndex) {
+                const idx = kids[pointerDragFromKidIndex].tasks.indexOf(pointerDragTask);
                 if (idx > -1) {
-                    kids[touchDragFromKidIndex].tasks.splice(idx, 1);
-                    kids[toKidIndex].tasks.push(touchDragTask);
+                    kids[pointerDragFromKidIndex].tasks.splice(idx, 1);
+                    kids[toKidIndex].tasks.push(pointerDragTask);
                     renderResults();
                 }
             }
         }
     }
-    isDragging = false;
-    touchDragTask = null;
-    touchDragFromKidIndex = null;
-    document.querySelectorAll('.task-dropzone.drag-over').forEach(el => el.classList.remove('drag-over'));
-});
-
-document.addEventListener('touchcancel', () => {
-    if (ghostElement) { ghostElement.remove(); ghostElement = null; }
-    isDragging = false;
-    touchDragTask = null;
-    touchDragFromKidIndex = null;
+    // Reset state
+    isPointerDragging = false;
+    pointerDragTask = null;
+    pointerDragFromKidIndex = null;
     document.querySelectorAll('.task-dropzone.drag-over').forEach(el => el.classList.remove('drag-over'));
 });

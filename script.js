@@ -340,7 +340,7 @@ function renderResults() {
                     ${k.tasks.length > 0 ? 
                         k.tasks.map(t => `
                             <li class="draggable-task" draggable="true" ondragstart="drag(event)" data-task="${t}" data-kid-index="${index}">
-                                <span style="cursor: grab; margin-right: 8px; color: #a0aec0;">⣿</span> ${t}
+                                <span class="drag-handle" style="cursor: grab; margin-right: 8px; color: #a0aec0; padding: 10px 10px 10px 0;">⣿</span> ${t}
                             </li>
                         `).join('')
                         : '<li class="empty-task-placeholder"><em>Arrastra tareas aquí</em></li>'}
@@ -387,3 +387,108 @@ function drop(ev) {
     
     renderResults();
 }
+
+// Mobile Touch Drag and Drop Support
+let touchDragTask = null;
+let touchDragFromKidIndex = null;
+let ghostElement = null;
+let isDragging = false;
+
+document.addEventListener('touchstart', (ev) => {
+    let handle = ev.target.closest('.drag-handle');
+    if (!handle) return;
+
+    let li = handle.closest('.draggable-task');
+    if (!li) return;
+
+    touchDragTask = li.dataset.task;
+    touchDragFromKidIndex = parseInt(li.dataset.kidIndex);
+
+    let rect = li.getBoundingClientRect();
+
+    ghostElement = li.cloneNode(true);
+    ghostElement.style.position = 'fixed';
+    ghostElement.style.opacity = '0.9';
+    ghostElement.style.pointerEvents = 'none';
+    ghostElement.style.zIndex = '9999';
+    ghostElement.style.width = rect.width + 'px';
+    ghostElement.style.height = rect.height + 'px';
+    ghostElement.style.margin = '0';
+    ghostElement.style.boxShadow = '0 8px 16px rgba(0,0,0,0.2)';
+    ghostElement.style.backgroundColor = 'var(--surface)';
+    ghostElement.style.borderRadius = '8px';
+    ghostElement.style.border = '1px solid var(--border)';
+    ghostElement.style.display = 'flex';
+    ghostElement.style.alignItems = 'center';
+    
+    document.body.appendChild(ghostElement);
+    isDragging = true;
+    
+    moveGhost(ev.touches[0]);
+}, { passive: false });
+
+document.addEventListener('touchmove', (ev) => {
+    if (!isDragging || !ghostElement) return;
+    ev.preventDefault(); 
+    moveGhost(ev.touches[0]);
+    
+    let touch = ev.touches[0];
+    let dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    document.querySelectorAll('.task-dropzone.drag-over').forEach(el => el.classList.remove('drag-over'));
+    
+    if (dropTarget) {
+        let dropzone = dropTarget.closest('.task-dropzone');
+        if (dropzone) {
+            dropzone.classList.add('drag-over');
+        }
+    }
+}, { passive: false });
+
+function moveGhost(touch) {
+    if(!ghostElement) return;
+    ghostElement.style.left = (touch.clientX - 20) + 'px';
+    ghostElement.style.top = (touch.clientY - 20) + 'px';
+}
+
+document.addEventListener('touchend', (ev) => {
+    if (!isDragging || !ghostElement) return;
+    
+    isDragging = false;
+    ghostElement.remove();
+    ghostElement = null;
+
+    document.querySelectorAll('.task-dropzone.drag-over').forEach(el => el.classList.remove('drag-over'));
+
+    let touch = ev.changedTouches[0];
+    let dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
+    
+    if (dropTarget) {
+        let dropzone = dropTarget.closest('.task-dropzone');
+        if (dropzone) {
+            let toKidIndex = parseInt(dropzone.dataset.kidIndex);
+            
+            if (touchDragFromKidIndex !== toKidIndex) {
+                let taskIndex = kids[touchDragFromKidIndex].tasks.indexOf(touchDragTask);
+                if (taskIndex > -1) {
+                    kids[touchDragFromKidIndex].tasks.splice(taskIndex, 1);
+                }
+                kids[toKidIndex].tasks.push(touchDragTask);
+                renderResults();
+            }
+        }
+    }
+    
+    touchDragTask = null;
+    touchDragFromKidIndex = null;
+});
+
+document.addEventListener('touchcancel', (ev) => {
+    if (!isDragging || !ghostElement) return;
+    isDragging = false;
+    ghostElement.remove();
+    ghostElement = null;
+    document.querySelectorAll('.task-dropzone.drag-over').forEach(el => el.classList.remove('drag-over'));
+    touchDragTask = null;
+    touchDragFromKidIndex = null;
+});
+

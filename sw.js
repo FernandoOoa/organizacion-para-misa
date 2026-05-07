@@ -1,4 +1,4 @@
-const CACHE_NAME = 'monaguillos-v12';
+const CACHE_NAME = 'monaguillos-v13';
 const urlsToCache = [
   './',
   './index.html',

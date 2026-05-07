@@ -57,5 +57,24 @@
         <p>Al soltar la tarea en el recuadro de otro niño, la lista se actualizará inmediatamente. Solo recuerda fijarte en los colores de las etiquetas de cada niño (azul, verde o naranja) para asegurarte de no asignarle manualmente una tarea muy pesada a un monaguillo "Chico".</p>
     </div>
 </div>
+
+<!-- Registro del Service Worker para funcionamiento Offline y Actualización Automática -->
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('Service Worker registrado correctamente'))
+        .catch(err => console.log('Error al registrar Service Worker:', err));
+    });
+
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
+    });
+  }
+</script>
 </body>
 </html>

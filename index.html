@@ -77,13 +77,22 @@
 
 <script src="script.js"></script>
 
-<!-- Registro del Service Worker para funcionamiento Offline -->
+<!-- Registro del Service Worker para funcionamiento Offline y Actualización Automática -->
 <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./sw.js')
         .then(reg => console.log('Service Worker registrado correctamente'))
         .catch(err => console.log('Error al registrar Service Worker:', err));
+    });
+
+    // Detectar cuando el Service Worker se actualiza en segundo plano y recargar la página suavemente
+    let refreshing = false;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!refreshing) {
+        refreshing = true;
+        window.location.reload();
+      }
     });
   }
 </script>

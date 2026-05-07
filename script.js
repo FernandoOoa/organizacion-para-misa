@@ -437,9 +437,12 @@ document.addEventListener('touchmove', (ev) => {
     document.querySelectorAll('.task-dropzone.drag-over').forEach(el => el.classList.remove('drag-over'));
     
     if (dropTarget) {
-        let dropzone = dropTarget.closest('.task-dropzone');
-        if (dropzone) {
-            dropzone.classList.add('drag-over');
+        let card = dropTarget.closest('.result-card');
+        if (card) {
+            let dropzone = card.querySelector('.task-dropzone');
+            if (dropzone) {
+                dropzone.classList.add('drag-over');
+            }
         }
     }
 }, { passive: false });
@@ -463,17 +466,20 @@ document.addEventListener('touchend', (ev) => {
     let dropTarget = document.elementFromPoint(touch.clientX, touch.clientY);
     
     if (dropTarget) {
-        let dropzone = dropTarget.closest('.task-dropzone');
-        if (dropzone) {
-            let toKidIndex = parseInt(dropzone.dataset.kidIndex);
-            
-            if (touchDragFromKidIndex !== toKidIndex) {
-                let taskIndex = kids[touchDragFromKidIndex].tasks.indexOf(touchDragTask);
-                if (taskIndex > -1) {
-                    kids[touchDragFromKidIndex].tasks.splice(taskIndex, 1);
+        let card = dropTarget.closest('.result-card');
+        if (card) {
+            let dropzone = card.querySelector('.task-dropzone');
+            if (dropzone) {
+                let toKidIndex = parseInt(dropzone.dataset.kidIndex);
+                
+                if (touchDragFromKidIndex !== toKidIndex) {
+                    let taskIndex = kids[touchDragFromKidIndex].tasks.indexOf(touchDragTask);
+                    if (taskIndex > -1) {
+                        kids[touchDragFromKidIndex].tasks.splice(taskIndex, 1);
+                    }
+                    kids[toKidIndex].tasks.push(touchDragTask);
+                    renderResults();
                 }
-                kids[toKidIndex].tasks.push(touchDragTask);
-                renderResults();
             }
         }
     }

@@ -30,7 +30,7 @@ const allObjects = [
     { id: 'Evangelio', name: 'Acompañantes Evangelio', order: 10, rules: 'evangelio', checked: true, category: 'normal', icon: liturgicalIcons.evangelio },
     { id: 'IncensarioNaveta', name: 'Incensario y Naveta', order: 11, rules: 'solo_grandes_combo', checked: false, category: 'solemne', icon: liturgicalIcons.incienso },
     { id: 'Ciriales', name: 'Ciriales 1 y 2', order: 12, rules: 'solo_grandes_doble', checked: false, category: 'solemne', icon: liturgicalIcons.cirial },
-    { id: 'Isopo', name: 'Isopo (Agua bendita)', order: 13, rules: 'neutral', checked: false, category: 'solemne', icon: liturgicalIcons.isopo }
+    { id: 'Isopo', name: 'Isopo y Asetre (Agua bendita)', order: 13, rules: 'neutral', checked: false, category: 'solemne', icon: liturgicalIcons.isopo }
 ];
 
 let kids = [];

@@ -1,4 +1,4 @@
-const CACHE_NAME = 'monaguillos-v13';
+const CACHE_NAME = 'monaguillos-v4';
 const urlsToCache = [
   './',
   './index.html',
@@ -7,7 +7,8 @@ const urlsToCache = [
   './script.js',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './logo.png'
 ];
 
 self.addEventListener('install', event => {

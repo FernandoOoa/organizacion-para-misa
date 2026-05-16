@@ -64,6 +64,11 @@ window.onload = () => {
             containerSolemne.innerHTML += html;
         }
     });
+
+    if (!localStorage.getItem('tutorialCompletado')) {
+        startTutorial();
+        localStorage.setItem('tutorialCompletado', 'true');
+    }
 };
 
 // ------------------------------------------------------------
@@ -446,4 +451,66 @@ function drop(ev) {
         kids[toKidIndex].tasks.push(task);
         renderResults();
     }
+}
+
+// ------------------------------------------------------------
+// Función para limpiar datos sin recargar la página
+function clearData() {
+    if (confirm('¿Estás seguro de que deseas borrar todos los monaguillos y ocultar los resultados?')) {
+        kids = [];
+        assignOrder = 0;
+        updateKidsUI();
+        const container = document.getElementById('resultsContainer');
+        if (container) container.style.display = 'none';
+        
+        const grid = document.getElementById('resultsBody');
+        if (grid) grid.innerHTML = '';
+        
+        // Hacer scroll suave hacia arriba (hacia la sección de registro)
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+}
+
+// ------------------------------------------------------------
+// Tutorial de Onboarding con Driver.js
+function startTutorial() {
+    const driver = window.driver.js.driver;
+    const tour = driver({
+        showProgress: true,
+        nextBtnText: 'Siguiente ➔',
+        prevBtnText: '⬅ Atrás',
+        doneBtnText: '¡Entendido!',
+        allowClose: false,
+        steps: [
+            { popover: { title: '¡Bienvenido a la Plataforma!', description: 'Vamos a dar un recorrido rápido de 4 pasos para que veas cómo organizar a los monaguillos.' } },
+            { element: '#kidName', popover: { title: '1. Registra a los monaguillos', description: 'Escribe su nombre aquí y selecciona si es Grande o Chico. Usa el botón para agregarlos a la lista.', side: "bottom", align: 'start' } },
+            { element: '#objectsListNormal', popover: { title: '2. Selecciona las tareas', description: 'Marca todas las cosas que se van a usar en esta Misa. Puedes cambiar las cantidades.', side: "top", align: 'start' } },
+            { element: '#btnAssign', popover: { title: '3. Magia Litúrgica', description: 'Haz clic aquí y el sistema repartirá las tareas automáticamente de forma justa y sin chocar los tiempos.', side: "top", align: 'start' } },
+            { 
+                element: '#resultsContainer', 
+                popover: { title: '4. Ajustes finales', description: 'Aquí verás las tarjetas resultantes con datos de prueba. ¡Usa el botón "⇄ Mover" en tu celular para intercambiar tareas de última hora!', side: "top", align: 'start' },
+                onHighlightStarted: () => {
+                    // Generar datos de prueba automáticamente si está vacío para que el contenedor exista
+                    if (kids.length === 0) {
+                        kids.push({ originalName: 'Juan (Prueba)', size: 'grande', tasks: [] });
+                        kids.push({ originalName: 'Pedro (Prueba)', size: 'chico', tasks: [] });
+                        kids.push({ originalName: 'Mateo (Prueba)', size: 'grande_incienso', tasks: [] });
+                        recalculateNames();
+                        updateKidsUI();
+
+                        // Desactivamos el scroll automático temporalmente para no estropear la animación del tutorial
+                        const container = document.getElementById('resultsContainer');
+                        const originalScroll = container.scrollIntoView;
+                        container.scrollIntoView = function() {}; 
+                        
+                        assignTasks(); // Generar las tarjetas
+                        
+                        // Restauramos la función original
+                        container.scrollIntoView = originalScroll;
+                    }
+                }
+            }
+        ]
+    });
+    tour.drive();
 }

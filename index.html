@@ -11,6 +11,7 @@
     <meta name="theme-color" content="#9B1B30">
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.css"/>
 </head>
 <body>
 <div class="container">
@@ -20,8 +21,9 @@
         </div>
         <h1>Organización de Monaguillos</h1>
         <p>Guía litúrgica para la asignación de actividades</p>
-        <div style="margin-top: 15px;">
+        <div style="margin-top: 15px; display: flex; gap: 15px; justify-content: center; align-items: center; flex-wrap: wrap;">
             <a href="reglas.html" style="color: var(--primary); text-decoration: none; font-weight: bold; border-bottom: 2px solid var(--accent); padding-bottom: 2px; transition: opacity 0.2s;">📖 Ver Manual de Uso y Reglas</a>
+            <button onclick="startTutorial()" style="background: none; border: 1px solid var(--primary); color: var(--primary); padding: 4px 12px; border-radius: 15px; cursor: pointer; font-size: 0.85rem; font-weight: bold; transition: all 0.2s;">🧭 Repetir Tutorial</button>
         </div>
     </div>
 
@@ -72,6 +74,10 @@
             Generar Asignación Automática
         </button>
         
+        <button onclick="clearData()" style="width:100%; margin-top: 12px; font-size:1rem; padding:12px; background-color: transparent; border: 1px dashed #cbd5e1; color: #64748b; border-radius: 8px; cursor: pointer; transition: all 0.2s;">
+            🗑️ Limpiar Monaguillos y Resultados
+        </button>
+        
         <div id="resultsContainer" style="display: none; margin-top: 25px;">
             <h2 style="text-align:center; margin-bottom: 20px;">Asignación Final</h2>
             <div id="resultsBody" class="results-grid"></div>
@@ -79,6 +85,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/driver.js@1.0.1/dist/driver.js.iife.js"></script>
 <script src="script.js"></script>
 
 <!-- Registro del Service Worker para funcionamiento Offline y Actualización Automática -->

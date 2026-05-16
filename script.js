@@ -342,25 +342,63 @@ function assignTasks() {
 }
 
 // ------------------------------------------------------------
+// Nueva función para reasignar tareas desde el menú <select> (Mobile First)
+window.moveTaskMobile = function (selectElement, taskName, fromKidIndex) {
+    const toKidIndex = parseInt(selectElement.value);
+    // Si no se seleccionó nada válido o es el mismo niño, no hacer nada
+    if (isNaN(toKidIndex) || fromKidIndex === toKidIndex) return;
+
+    // Buscar y remover la tarea del monaguillo original
+    const idx = kids[fromKidIndex].tasks.indexOf(taskName);
+    if (idx > -1) {
+        kids[fromKidIndex].tasks.splice(idx, 1);
+        // Asignar la tarea al nuevo monaguillo
+        kids[toKidIndex].tasks.push(taskName);
+        // Volver a dibujar las tarjetas
+        renderResults();
+    }
+};
+
+// ------------------------------------------------------------
 // Rendering of assignment results
 function renderResults() {
     const container = document.getElementById('resultsContainer');
     const grid = document.getElementById('resultsBody');
+
     grid.innerHTML = kids.map((k, index) => {
         const label = k.size === 'grande_incienso' ? 'Grande (Incienso)' : (k.size === 'grande' ? 'Grande' : 'Chico');
         const badgeColor = k.size === 'chico' ? '#2b6cb0' : (k.size === 'grande' ? '#2f855a' : '#b45309');
         const badgeBg = k.size === 'chico' ? '#ebf8ff' : (k.size === 'grande' ? '#f0fff4' : '#fff9ed');
         const badgeBorder = k.size === 'chico' ? '#bee3f8' : (k.size === 'grande' ? '#c6f6d5' : '#fce8c5');
+
         const tasksHtml = k.tasks.length > 0 ?
-            k.tasks.map(t => `
-                <li class="draggable-task" draggable="true" ondragstart="drag(event)" data-task="${t}" data-kid-index="${index}">
-                    <span class="drag-handle" style="cursor: grab; margin-right: 8px; color: #a0aec0; padding: 10px 10px 10px 0;">⣿</span> ${t}
-                </li>`).join('')
-            : '<li class="empty-task-placeholder"><em>Arrastra tareas aquí</em></li>';
+            k.tasks.map(t => {
+                // Generar las opciones del menú select excluyendo al niño actual
+                const selectOptions = kids.map((otherKid, otherIndex) =>
+                    otherIndex !== index ? `<option value="${otherIndex}">${otherKid.name}</option>` : ''
+                ).join('');
+
+                // Renderizar el ítem de lista con el select al lado derecho
+                return `
+                <li class="draggable-task" draggable="true" ondragstart="drag(event)" data-task="${t}" data-kid-index="${index}" style="display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; margin-bottom: 6px; background-color: var(--surface, #ffffff); border: 1px solid var(--border, #e2e8f0); border-radius: 6px;">
+                    <div style="display: flex; align-items: center; overflow: hidden; text-overflow: ellipsis;">
+                        <span class="drag-handle" style="cursor: grab; margin-right: 8px; color: #cbd5e1; flex-shrink: 0;">⣿</span>
+                        <span style="font-size: 0.9rem;">${t}</span>
+                    </div>
+                    ${kids.length > 1 ? `
+                    <select onchange="moveTaskMobile(this, '${t}', ${index})" style="margin-left: 8px; padding: 4px; font-size: 0.75rem; border-radius: 4px; border: 1px solid #cbd5e1; background-color: #f8fafc; color: #475569; max-width: 100px; flex-shrink: 0;">
+                        <option value="" disabled selected>⇄ Mover</option>
+                        ${selectOptions}
+                    </select>
+                    ` : ''}
+                </li>`;
+            }).join('')
+            : '<li class="empty-task-placeholder" style="padding: 8px; color: #94a3b8; font-style: italic; font-size: 0.9rem;"><em>Sin tareas</em></li>';
+
         return `
             <div class="result-card">
                 <div class="result-card-title" style="display: flex; justify-content: space-between; align-items: center;">
-                    <span>${k.name}</span>
+                    <span style="font-weight: bold;">${k.name}</span>
                     <span style="font-size: 0.75rem; padding: 4px 8px; border-radius: 12px; font-weight: 500; background-color: ${badgeBg}; color: ${badgeColor}; border: 1px solid ${badgeBorder};">${label}</span>
                 </div>
                 <div class="result-card-tasks">
@@ -370,12 +408,13 @@ function renderResults() {
                 </div>
             </div>`;
     }).join('');
+
     container.style.display = 'block';
     container.scrollIntoView({ behavior: 'smooth' });
 }
 
 // ------------------------------------------------------------
-// Desktop drag‑and‑drop handlers
+// Desktop drag‑and‑drop handlers (Se mantienen intactos para usar con ratón en PC)
 function allowDrop(ev) { ev.preventDefault(); ev.currentTarget.classList.add('drag-over'); }
 function handleDragLeave(ev) { ev.currentTarget.classList.remove('drag-over'); }
 function drag(ev) { ev.dataTransfer.setData('task', ev.target.dataset.task); ev.dataTransfer.setData('fromKidIndex', ev.target.dataset.kidIndex); }
@@ -387,87 +426,9 @@ function drop(ev) {
     const toKidIndex = parseInt(ev.currentTarget.dataset.kidIndex);
     if (fromKidIndex === toKidIndex) return;
     const idx = kids[fromKidIndex].tasks.indexOf(task);
-    if (idx > -1) kids[fromKidIndex].tasks.splice(idx, 1);
-    kids[toKidIndex].tasks.push(task);
-    renderResults();
+    if (idx > -1) {
+        kids[fromKidIndex].tasks.splice(idx, 1);
+        kids[toKidIndex].tasks.push(task);
+        renderResults();
+    }
 }
-
-// ------------------------------------------------------------
-// Unified pointer drag‑and‑drop (mouse, touch, pen)
-let pointerDragTask = null;
-let pointerDragFromKidIndex = null;
-let pointerStartX = 0;
-let pointerStartY = 0;
-let isPointerDragging = false;
-let ghostElement = null;
-
-document.addEventListener('pointerdown', ev => {
-    const li = ev.target.closest('.draggable-task');
-    if (!li) return;
-    pointerDragTask = li.dataset.task;
-    pointerDragFromKidIndex = parseInt(li.dataset.kidIndex);
-    pointerStartX = ev.clientX;
-    pointerStartY = ev.clientY;
-    ev.target.setPointerCapture(ev.pointerId);
-});
-
-document.addEventListener('pointermove', ev => {
-    if (!pointerDragTask) return;
-    if (!isPointerDragging) {
-        if (Math.abs(ev.clientX - pointerStartX) > 8 || Math.abs(ev.clientY - pointerStartY) > 8) {
-            isPointerDragging = true;
-            const li = document.querySelector(`.draggable-task[data-task="${CSS.escape(pointerDragTask)}"][data-kid-index="${pointerDragFromKidIndex}"]`);
-            if (!li) return;
-            const rect = li.getBoundingClientRect();
-            ghostElement = li.cloneNode(true);
-            ghostElement.style.position = 'fixed';
-            ghostElement.style.opacity = '0.9';
-            ghostElement.style.pointerEvents = 'none';
-            ghostElement.style.zIndex = '9999';
-            ghostElement.style.width = rect.width + 'px';
-            ghostElement.style.height = rect.height + 'px';
-            ghostElement.style.boxShadow = '0 8px 16px rgba(0,0,0,0.2)';
-            ghostElement.style.backgroundColor = 'var(--surface, #fff)';
-            ghostElement.style.borderRadius = '8px';
-            ghostElement.style.border = '1px solid var(--border, #ccc)';
-            document.body.appendChild(ghostElement);
-        } else {
-            return;
-        }
-    }
-    ev.preventDefault();
-    if (ghostElement) {
-        ghostElement.style.left = ev.clientX - (ghostElement.offsetWidth / 2) + 'px';
-        ghostElement.style.top = ev.clientY - (ghostElement.offsetHeight / 2) + 'px';
-    }
-
-    const dropTarget = document.elementFromPoint(ev.clientX, ev.clientY);
-    document.querySelectorAll('.task-dropzone.drag-over').forEach(el => el.classList.remove('drag-over'));
-    if (dropTarget) {
-        const dropzone = dropTarget.closest('.task-dropzone');
-        if (dropzone) dropzone.classList.add('drag-over');
-    }
-});
-
-document.addEventListener('pointerup', ev => {
-    if (ghostElement) { ghostElement.remove(); ghostElement = null; }
-    if (isPointerDragging) {
-        const dropTarget = document.elementFromPoint(ev.clientX, ev.clientY);
-        const dropzone = dropTarget ? dropTarget.closest('.task-dropzone') : null;
-        if (dropzone) {
-            const toKidIndex = parseInt(dropzone.dataset.kidIndex);
-            if (pointerDragFromKidIndex !== toKidIndex) {
-                const idx = kids[pointerDragFromKidIndex].tasks.indexOf(pointerDragTask);
-                if (idx > -1) {
-                    kids[pointerDragFromKidIndex].tasks.splice(idx, 1);
-                    kids[toKidIndex].tasks.push(pointerDragTask);
-                    renderResults();
-                }
-            }
-        }
-    }
-    isPointerDragging = false;
-    pointerDragTask = null;
-    pointerDragFromKidIndex = null;
-    document.querySelectorAll('.task-dropzone.drag-over').forEach(el => el.classList.remove('drag-over'));
-});

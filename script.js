@@ -40,7 +40,6 @@ const allObjects = [
 ];
 
 let kids = [];
-let anonCounter = 1;
 let assignOrder = 0;
 
 // ------------------------------------------------------------
@@ -69,26 +68,42 @@ window.onload = () => {
 
 // ------------------------------------------------------------
 // Kid management
+
+// Nueva función para recalcular los números de lista en tiempo real
+function recalculateNames() {
+    kids.forEach((k, index) => {
+        k.name = `${index + 1}. ${k.originalName}`;
+    });
+}
+
 function addAnonymousKid(size) {
-    kids.push({ name: `Monaguillo ${anonCounter++}`, size, tasks: [] });
+    kids.push({ originalName: 'Monaguillo', size, tasks: [] });
+    recalculateNames();
     updateKidsUI();
 }
+
 function addKid() {
     let name = document.getElementById('kidName').value.trim();
     if (!name) {
-        name = `Monaguillo ${anonCounter++}`;
+        name = 'Monaguillo';
     }
     const size = document.getElementById('kidSize').value;
-    kids.push({ name, size, tasks: [] });
+
+    // Guardamos el originalName para no perderlo al reenumerar
+    kids.push({ originalName: name, size, tasks: [] });
+    recalculateNames();
     updateKidsUI();
     document.getElementById('kidName').value = '';
 }
+
 function updateKidsUI() {
     const list = document.getElementById('kidsList');
     list.innerHTML = kids.map((k, i) => {
         const label = k.size === 'grande_incienso' ? 'Grande (Incienso)' : (k.size === 'grande' ? 'Grande' : 'Chico');
         const expertClass = k.size === 'grande_incienso' ? 'expert' : '';
-        return `<span class="kid-tag ${expertClass}">${k.name} (${label}) <span style="cursor:pointer; margin-left:8px; font-weight:bold" onclick="kids.splice(${i},1);updateKidsUI()">×</span></span>`;
+
+        // Al darle clic en la "×", se borra el monaguillo, se recalculan los números y se actualiza la interfaz
+        return `<span class="kid-tag ${expertClass}">${k.name} (${label}) <span style="cursor:pointer; margin-left:8px; font-weight:bold" onclick="kids.splice(${i},1); recalculateNames(); updateKidsUI()">×</span></span>`;
     }).join('');
 }
 

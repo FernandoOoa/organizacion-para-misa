@@ -13,24 +13,30 @@ const liturgicalIcons = {
     incienso: `<svg viewBox="0 0 100 100" class="lit-icon" fill="currentColor"><path d="M50,10 L45,15 L55,15 Z M40,20 L35,25 L65,25 L60,20 Z M50,30 C35,30 25,40 25,60 L25,80 C25,85 35,90 50,90 C65,90 75,85 75,80 L75,60 C75,40 65,30 50,30 Z M30,60 C30,45 40,35 50,35 C60,35 70,45 70,60 L70,78 L30,78 Z M45,30 L35,15 L25,15 L35,30 Z M55,30 L65,15 L75,15 L65,30 Z M35,10 C40,10 42,15 40,20 Z M65,10 C60,10 58,15 60,20 Z"/></svg>`,
     cirial: `<svg viewBox="0 0 100 100" class="lit-icon" fill="currentColor"><path d="M50,10 L40,10 L40,30 C30,30 25,35 25,45 C25,55 30,60 40,60 L40,90 L60,90 L60,60 C70,60 75,55 75,45 C75,35 70,30 60,30 L60,10 L50,10 Z M45,30 L55,30 L55,55 L45,55 L45,30 Z"/></svg>`,
     isopo: `<svg viewBox="0 0 100 100" class="lit-icon" fill="currentColor"><path d="M50,10 C35,10 25,20 25,40 L25,50 C20,50 15,55 15,60 C15,65 20,70 25,70 L25,90 C25,95 35,100 50,100 C65,100 75,95 75,90 L75,70 C80,70 85,65 85,60 C85,55 80,50 75,50 L75,40 C75,20 65,10 50,10 Z M30,40 C30,25 40,15 50,15 C60,15 70,25 70,40 L70,50 C70,60 60,65 50,65 C40,65 30,60 30,50 Z"/></svg>`,
-    cruz_alta: `<svg viewBox="0 0 100 100" class="lit-icon" fill="currentColor"><path d="M45,10 L55,10 L55,30 L75,30 L75,40 L55,40 L55,90 L45,90 L45,40 L25,40 L25,30 L45,30 Z"/></svg>`
+    cruz_alta: `<svg viewBox="0 0 100 100" class="lit-icon" fill="currentColor"><path d="M45,10 L55,10 L55,30 L75,30 L75,40 L55,40 L55,90 L45,90 L45,40 L25,40 L25,30 L45,30 Z"/></svg>`,
+    aceites: `<svg viewBox="0 0 100 100" class="lit-icon" fill="currentColor"><path d="M50,10 C45,10 40,15 40,22 L40,30 L30,40 L30,80 C30,86 35,90 41,90 L59,90 C65,90 70,86 70,80 L70,40 L60,30 L60,22 C60,15 55,10 50,10 Z M45,22 C45,20 47,15 50,15 C53,15 55,20 55,22 L55,30 L45,30 L45,22 Z M35,42 L65,42 L65,80 C65,83 62,85 59,85 L41,85 C38,85 35,83 35,80 L35,42 Z M45,55 L55,55 L55,70 L45,70 Z"/></svg>`,
+    mitra: `<svg viewBox="0 0 100 100" class="lit-icon" fill="currentColor"><path d="M50,10 L25,45 L25,75 L75,75 L75,45 Z M30,70 L30,48 L45,60 L45,70 Z M70,70 L55,70 L55,60 L70,48 Z M50,18 L70,45 L50,55 L30,45 Z M40,75 L35,95 L45,95 Z M60,75 L55,95 L65,95 Z"/></svg>`,
+    baculo: `<svg viewBox="0 0 100 100" class="lit-icon" fill="currentColor"><path d="M45,90 L55,90 L55,35 C65,35 70,25 70,18 C70,10 60,5 50,5 C38,5 30,12 30,22 L40,22 C40,16 45,13 50,13 C55,13 60,16 60,18 C60,22 55,25 45,25 L45,90 Z"/></svg>`
 };
 
 // List of all possible objects with metadata
 const allObjects = [
-    { id: 'CruzAlta', name: 'Cruz Alta', order: 0, rules: 'solo_grandes', checked: false, category: 'solemne', icon: liturgicalIcons.cruz_alta },
-    { id: 'Caliz', name: 'Cáliz', order: 1, rules: 'neutral', checked: true, category: 'normal', icon: liturgicalIcons.caliz },
-    { id: 'Copon', name: 'Copón', order: 2, rules: 'neutral', checked: true, category: 'normal', icon: liturgicalIcons.copon },
-    { id: 'Vinajeras', name: 'Vinajeras', order: 3, rules: 'vinajeras', checked: true, category: 'normal', icon: liturgicalIcons.vinajeras },
-    { id: 'LavaboCombo', name: 'Piscina, Manutergio, Jarra', order: 4, rules: 'combo_lavabo', checked: true, category: 'normal', icon: liturgicalIcons.lavabo },
-    { id: 'Platillo', name: 'Platillo', order: 5, rules: 'multiple', checked: true, category: 'normal', defaultQty: 2, icon: liturgicalIcons.platillo },
-    { id: 'Libro', name: 'Libro', order: 7, rules: 'solo_grandes', checked: true, category: 'normal', icon: liturgicalIcons.libro },
-    { id: 'Campanada1', name: 'Campanada 1', order: 8, rules: 'neutral', checked: true, category: 'normal', icon: liturgicalIcons.campana },
-    { id: 'Campanada2y3', name: 'Campanadas 2 y 3', order: 9, rules: 'neutral', checked: true, category: 'normal', icon: liturgicalIcons.campana },
-    { id: 'Evangelio', name: 'Acompañantes Evangelio', order: 10, rules: 'evangelio', checked: true, category: 'normal', icon: liturgicalIcons.evangelio },
-    { id: 'IncensarioNaveta', name: 'Incensario y Naveta', order: 11, rules: 'solo_grandes_combo', checked: false, category: 'solemne', icon: liturgicalIcons.incienso },
-    { id: 'Ciriales', name: 'Ciriales 1 y 2', order: 12, rules: 'solo_grandes_doble', checked: false, category: 'solemne', icon: liturgicalIcons.cirial },
-    { id: 'Isopo', name: 'Isopo y Asetre (Agua bendita)', order: 13, rules: 'neutral', checked: false, category: 'solemne', icon: liturgicalIcons.isopo }
+    { id: 'CruzAlta', name: 'Cruz Alta', order: 10, rules: 'solo_grandes', checked: false, category: 'solemne', icon: liturgicalIcons.cruz_alta },
+    { id: 'Mitra', name: 'Mitra (Obispo)', order: 15, rules: 'exclusivo_grande', checked: false, category: 'solemne', icon: liturgicalIcons.mitra },
+    { id: 'Baculo', name: 'Báculo (Obispo)', order: 16, rules: 'exclusivo_grande', checked: false, category: 'solemne', icon: liturgicalIcons.baculo },
+    { id: 'Caliz', name: 'Cáliz', order: 50, rules: 'neutral', checked: true, category: 'normal', icon: liturgicalIcons.caliz },
+    { id: 'Copon', name: 'Copón', order: 51, rules: 'neutral', checked: true, category: 'normal', icon: liturgicalIcons.copon },
+    { id: 'Vinajeras', name: 'Vinajeras', order: 52, rules: 'vinajeras', checked: true, category: 'normal', icon: liturgicalIcons.vinajeras },
+    { id: 'AceitesBautizo', name: 'Aceites para Bautizos', order: 53, rules: 'neutral', checked: false, category: 'normal', icon: liturgicalIcons.aceites },
+    { id: 'LavaboCombo', name: 'Piscina, Manutergio, Jarra', order: 60, rules: 'combo_lavabo', checked: true, category: 'normal', icon: liturgicalIcons.lavabo },
+    { id: 'Platillo', name: 'Platillo', order: 70, rules: 'multiple', checked: true, category: 'normal', defaultQty: 2, icon: liturgicalIcons.platillo },
+    { id: 'Libro', name: 'Libro', order: 80, rules: 'solo_grandes', checked: true, category: 'normal', icon: liturgicalIcons.libro },
+    { id: 'Campanada1', name: 'Campanada 1', order: 90, rules: 'campana', checked: true, category: 'normal', icon: liturgicalIcons.campana },
+    { id: 'Campanada2y3', name: 'Campanadas 2 y 3', order: 91, rules: 'campana', checked: true, category: 'normal', icon: liturgicalIcons.campana },
+    { id: 'Evangelio', name: 'Acompañantes Evangelio', order: 40, rules: 'evangelio', checked: true, category: 'normal', icon: liturgicalIcons.evangelio },
+    { id: 'IncensarioNaveta', name: 'Incensario y Naveta', order: 20, rules: 'solo_grandes_combo', checked: false, category: 'solemne', icon: liturgicalIcons.incienso },
+    { id: 'Ciriales', name: 'Ciriales 1 y 2', order: 30, rules: 'solo_grandes_doble', checked: false, category: 'solemne', icon: liturgicalIcons.cirial },
+    { id: 'Isopo', name: 'Isopo y Asetre (Agua bendita)', order: 100, rules: 'neutral', checked: false, category: 'solemne', icon: liturgicalIcons.isopo }
 ];
 
 let kids = [];
@@ -42,6 +48,7 @@ let assignOrder = 0;
 window.onload = () => {
     const containerNormal = document.getElementById('objectsListNormal');
     const containerSolemne = document.getElementById('objectsListSolemne');
+
     allObjects.forEach(obj => {
         const extraInput = obj.rules === 'multiple' ? `
             <input type="number" id="qty_${obj.id}" value="${obj.defaultQty}" min="1" max="8">` : '';
@@ -110,42 +117,106 @@ function assignTasks() {
         k.tasks = [];
         k.lastAssigned = 0;
         k.locked = false;
-        k.isIncensarioRestricted = false;
+        k.hasProcesion = false;
+        k.hasOfertorioPesado = false;
+        k.hasCampana = false;
     });
+
     const selectedIds = Array.from(document.querySelectorAll('input[type="checkbox"]:checked')).map(cb => cb.value);
+
+    // VALIDACIÓN ESPECIAL: Mínimo 3 monaguillos para Mitra y Báculo
+    const hasMitra = selectedIds.includes('Mitra');
+    const hasBaculo = selectedIds.includes('Baculo');
+    if ((hasMitra || hasBaculo) && kids.length < 3) {
+        alert('La Mitra y el Báculo solo se pueden usar si hay mínimo 3 monaguillos.');
+        return;
+    }
+
+    // VALIDACIÓN ESPECIAL: Verificar si hay grandes suficientes antes de continuar
+    if (hasMitra || hasBaculo) {
+        const totalGrandes = kids.filter(k => k.size === 'grande' || k.size === 'grande_incienso').length;
+        const totalNecesarios = (hasMitra ? 1 : 0) + (hasBaculo ? 1 : 0);
+        if (totalGrandes < totalNecesarios) {
+            alert('No hay suficientes monaguillos Grandes registrados para cargar la Mitra y/o el Báculo.');
+            return;
+        }
+    }
+
     let activeTasks = allObjects.filter(o => selectedIds.includes(o.id)).sort((a, b) => a.order - b.order);
+
     const hasCiriales = activeTasks.some(t => t.id === 'Ciriales');
+    const hasEvangelio = activeTasks.some(t => t.id === 'Evangelio');
+    const hasIncensario = activeTasks.some(t => t.id === 'IncensarioNaveta');
+
+    const evangelioSuffix = (hasCiriales && hasEvangelio) ? ' / Evangelio' : '';
     if (hasCiriales) {
         activeTasks = activeTasks.filter(t => t.id !== 'Evangelio');
     }
+
+    // --- PRE-PROCESAMIENTO EXCLUSIVO: MITRA ---
+    if (hasMitra) {
+        let grandesDisp = kids.filter(k => (k.size === 'grande' || k.size === 'grande_incienso') && !k.locked);
+        let kid = getFairKid(grandesDisp);
+        if (kid) {
+            kid.tasks.push('Mitra');
+            kid.locked = true; // Bloqueo absoluto: no hace nada más aparte de esto
+            kid.hasProcesion = true;
+        }
+        activeTasks = activeTasks.filter(t => t.id !== 'Mitra');
+    }
+
+    // --- PRE-PROCESAMIENTO EXCLUSIVO: BÁCULO ---
+    if (hasBaculo) {
+        let grandesDisp = kids.filter(k => (k.size === 'grande' || k.size === 'grande_incienso') && !k.locked);
+        let kid = getFairKid(grandesDisp);
+        if (kid) {
+            kid.tasks.push('Báculo');
+            kid.locked = true; // Bloqueo absoluto: no hace nada más aparte de esto
+            kid.hasProcesion = true;
+        }
+        activeTasks = activeTasks.filter(t => t.id !== 'Baculo');
+    }
+
+    // Pre-procesamiento de bloques pesados estructurales (Solo si hay >= 6 niños)
     if (hasCiriales && kids.length >= 6) {
-        let largeKids = kids.filter(k => k.size === 'grande' || k.size === 'grande_incienso');
-        if (largeKids.length < 2) largeKids = kids.filter(k => k.size === 'grande_incienso');
-        if (largeKids.length < 2) largeKids = kids;
+        let largeKids = kids.filter(k => (k.size === 'grande' || k.size === 'grande_incienso') && !k.locked);
+        if (largeKids.length < 2) largeKids = kids.filter(k => !k.locked);
         const c1 = largeKids[largeKids.length - 1];
         const c2 = largeKids[largeKids.length - 2];
-        c1.tasks.push('Cirial 1'); c1.locked = true;
-        c2.tasks.push('Cirial 2'); c2.locked = true;
+        if (c1) { c1.tasks.push('Cirial 1' + evangelioSuffix); c1.locked = true; c1.hasProcesion = true; }
+        if (c2) { c2.tasks.push('Cirial 2' + evangelioSuffix); c2.locked = true; c2.hasProcesion = true; }
     }
-    let incensarioGlobal = null;
-    const hasIncensario = activeTasks.some(t => t.id === 'IncensarioNaveta');
+
     if (hasIncensario && kids.length >= 6) {
         const available = kids.filter(k => !k.locked);
         let experts = available.filter(k => k.size === 'grande_incienso');
         if (experts.length === 0) experts = available.filter(k => k.size === 'grande');
         if (experts.length === 0) experts = available;
+
         if (experts.length > 0) {
-            incensarioGlobal = experts[0];
-            incensarioGlobal.tasks.push('Incensario');
-            incensarioGlobal.lastAssigned = ++assignOrder;
-            incensarioGlobal.isIncensarioRestricted = true;
+            const inc = experts[0];
+            inc.tasks.push('Incensario');
+            inc.lastAssigned = ++assignOrder;
+            inc.locked = true;
+            inc.hasProcesion = true;
+            inc.hasOfertorioPesado = true;
+
+            let navCandidates = available.filter(k => k !== inc);
+            const nav = getFairKid(navCandidates);
+            if (nav) {
+                nav.tasks.push('Naveta');
+                nav.hasProcesion = true;
+                nav.hasOfertorioPesado = true;
+            }
+            activeTasks = activeTasks.filter(t => t.id !== 'IncensarioNaveta');
         }
     }
+
     const disponibles = kids.filter(k => !k.locked);
-    const filterRestricted = arr => arr.filter(k => !k.isIncensarioRestricted);
     const grandes = disponibles.filter(k => k.size === 'grande' || k.size === 'grande_incienso');
     const chicos = disponibles.filter(k => k.size === 'chico');
     const todos = [...disponibles];
+
     activeTasks.forEach(task => {
         if (task.rules === 'multiple') {
             const maxQty = todos.length;
@@ -161,39 +232,68 @@ function assignTasks() {
                 }
             }
         } else if (task.rules === 'solo_grandes') {
-            let kid = getFairKid(filterRestricted(grandes));
-            if (!kid) kid = getFairKid(filterRestricted(todos));
-            if (kid) kid.tasks.push(task.name);
+            let pool = todos;
+            if (task.id === 'CruzAlta') {
+                pool = todos.filter(k => !k.hasProcesion);
+            }
+            let poolGrandes = pool.filter(k => k.size === 'grande' || k.size === 'grande_incienso');
+            let kid = getFairKid(poolGrandes.length > 0 ? poolGrandes : pool);
+
+            if (!kid && task.id === 'CruzAlta') {
+                kid = getFairKid(grandes.length > 0 ? grandes : todos);
+            }
+            if (kid) {
+                kid.tasks.push(task.name);
+                if (task.id === 'CruzAlta') kid.hasProcesion = true;
+            }
         } else if (task.rules === 'solo_grandes_combo') {
-            if (incensarioGlobal) {
-                let candidates = filterRestricted(todos).filter(k => !k.tasks.includes('Campanada 1') && !k.tasks.includes('Vinajeras (lleva y recoge)'));
-                if (candidates.length === 0) candidates = filterRestricted(todos);
-                const navKid = getFairKid(candidates);
-                if (navKid) navKid.tasks.push('Naveta');
-            } else {
-                let expertos = filterRestricted(todos).filter(k => k.size === 'grande_incienso');
-                if (expertos.length === 0) expertos = filterRestricted(grandes);
-                if (expertos.length === 0) expertos = filterRestricted(todos);
-                const incKid = getFairKid(expertos);
-                if (incKid) incKid.tasks.push('Incensario');
-                let candidates = filterRestricted(todos).filter(k => !k.tasks.includes('Campanada 1') && !k.tasks.includes('Vinajeras (lleva y recoge)') && k !== incKid);
-                if (candidates.length === 0) candidates = filterRestricted(todos).filter(k => k !== incKid);
-                const navKid = getFairKid(candidates);
-                if (navKid) navKid.tasks.push('Naveta');
+            let pool = todos.filter(k => !k.hasProcesion);
+            let poolGrandes = pool.filter(k => k.size === 'grande' || k.size === 'grande_incienso');
+
+            const incKid = getFairKid(poolGrandes.length > 0 ? poolGrandes : pool) || getFairKid(todos);
+            if (incKid) {
+                incKid.tasks.push('Incensario');
+                incKid.hasProcesion = true;
+                incKid.hasOfertorioPesado = true;
+            }
+
+            let navPool = pool.filter(k => k !== incKid);
+            const navKid = getFairKid(navPool.length > 0 ? navPool : todos.filter(k => k !== incKid));
+            if (navKid) {
+                navKid.tasks.push('Naveta');
+                navKid.hasProcesion = true;
+                navKid.hasOfertorioPesado = true;
             }
         } else if (task.rules === 'solo_grandes_doble') {
-            if (kids.length < 6) {
-                const candidatos = filterRestricted(grandes);
-                const c1 = getFairKid(candidatos);
-                if (c1) c1.tasks.push('Cirial 1');
-                const c2 = getFairKid(candidatos.filter(k => k !== c1)) || c1;
-                if (c2 && c2 !== c1) c2.tasks.push('Cirial 2');
-                else if (c1) c1.tasks.push('Cirial 2');
+            let pool = todos.filter(k => !k.hasProcesion);
+            let grandesDisp = pool.filter(k => k.size === 'grande' || k.size === 'grande_incienso');
+
+            const c1 = getFairKid(grandesDisp.length > 0 ? grandesDisp : pool) || getFairKid(todos);
+            if (c1) {
+                c1.tasks.push('Cirial 1' + evangelioSuffix);
+                c1.hasProcesion = true;
+            }
+
+            let poolC2 = pool.filter(k => k !== c1);
+            let c2 = null;
+            let grandesC2 = poolC2.filter(k => k.size === 'grande' || k.size === 'grande_incienso');
+
+            if (grandesC2.length > 0) {
+                c2 = getFairKid(grandesC2);
+            } else {
+                let chicosC2 = poolC2.filter(k => k.size === 'chico');
+                c2 = getFairKid(chicosC2.length > 0 ? chicosC2 : poolC2) || getFairKid(todos.filter(k => k !== c1));
+            }
+
+            if (c2) {
+                c2.tasks.push('Cirial 2' + evangelioSuffix);
+                c2.hasProcesion = true;
             }
         } else if (task.rules === 'evangelio') {
-            const gSorted = [...filterRestricted(grandes)].sort((a, b) => a.tasks.length - b.tasks.length || (a.lastAssigned || 0) - (b.lastAssigned || 0));
-            const cSorted = [...filterRestricted(chicos)].sort((a, b) => a.tasks.length - b.tasks.length || (a.lastAssigned || 0) - (b.lastAssigned || 0));
-            const tSorted = [...filterRestricted(todos)].sort((a, b) => a.tasks.length - b.tasks.length || (a.lastAssigned || 0) - (b.lastAssigned || 0));
+            const gSorted = [...grandes].sort((a, b) => a.tasks.length - b.tasks.length || (a.lastAssigned || 0) - (b.lastAssigned || 0));
+            const cSorted = [...chicos].sort((a, b) => a.tasks.length - b.tasks.length || (a.lastAssigned || 0) - (b.lastAssigned || 0));
+            const tSorted = [...todos].sort((a, b) => a.tasks.length - b.tasks.length || (a.lastAssigned || 0) - (b.lastAssigned || 0));
+
             if (gSorted.length >= 2) {
                 gSorted[0].tasks.push('Evangelio 1'); gSorted[0].lastAssigned = ++assignOrder;
                 gSorted[1].tasks.push('Evangelio 2'); gSorted[1].lastAssigned = ++assignOrder;
@@ -206,8 +306,23 @@ function assignTasks() {
             } else if (tSorted.length === 1) {
                 tSorted[0].tasks.push('Evangelio'); tSorted[0].lastAssigned = ++assignOrder;
             }
+        } else if (task.rules === 'campana') {
+            let pool = todos.filter(k => !k.hasCampana);
+            let kid = getFairKid(pool.length > 0 ? pool : todos);
+            if (kid) {
+                kid.tasks.push(task.name);
+                kid.hasCampana = true;
+            }
+        } else if (task.id === 'Caliz' || task.id === 'Copon' || task.rules === 'vinajeras' || task.id === 'AceitesBautizo') {
+            let pool = todos.filter(k => !k.hasOfertorioPesado);
+            let kid = getFairKid(pool.length > 0 ? pool : todos);
+            if (kid) {
+                kid.tasks.push(task.rules === 'vinajeras' ? 'Vinajeras (lleva y recoge)' : task.name);
+            }
         } else if (task.rules === 'combo_lavabo') {
-            const tSorted = [...filterRestricted(todos)].sort((a, b) => a.tasks.length - b.tasks.length || (a.lastAssigned || 0) - (b.lastAssigned || 0));
+            let pool = todos.filter(k => !k.hasOfertorioPesado);
+            let tSorted = [...(pool.length > 0 ? pool : todos)].sort((a, b) => a.tasks.length - b.tasks.length || (a.lastAssigned || 0) - (b.lastAssigned || 0));
+
             if (tSorted.length === 1) {
                 tSorted[0].tasks.push('Piscina, Manutergio y Jarra'); tSorted[0].lastAssigned = ++assignOrder;
             } else if (tSorted.length === 2) {
@@ -219,8 +334,8 @@ function assignTasks() {
                 tSorted[2].tasks.push('Jarra'); tSorted[2].lastAssigned = ++assignOrder;
             }
         } else {
-            const kid = getFairKid(filterRestricted(todos));
-            if (kid) kid.tasks.push(task.rules === 'vinajeras' ? 'Vinajeras (lleva y recoge)' : task.name);
+            let kid = getFairKid(todos);
+            if (kid) kid.tasks.push(task.name);
         }
     });
     renderResults();
@@ -284,8 +399,8 @@ let pointerDragFromKidIndex = null;
 let pointerStartX = 0;
 let pointerStartY = 0;
 let isPointerDragging = false;
+let ghostElement = null;
 
-// Start pointer interaction
 document.addEventListener('pointerdown', ev => {
     const li = ev.target.closest('.draggable-task');
     if (!li) return;
@@ -293,11 +408,9 @@ document.addEventListener('pointerdown', ev => {
     pointerDragFromKidIndex = parseInt(li.dataset.kidIndex);
     pointerStartX = ev.clientX;
     pointerStartY = ev.clientY;
-    // Capture subsequent moves even if pointer leaves the element
     ev.target.setPointerCapture(ev.pointerId);
 });
 
-// Move pointer
 document.addEventListener('pointermove', ev => {
     if (!pointerDragTask) return;
     if (!isPointerDragging) {
@@ -314,16 +427,20 @@ document.addEventListener('pointermove', ev => {
             ghostElement.style.width = rect.width + 'px';
             ghostElement.style.height = rect.height + 'px';
             ghostElement.style.boxShadow = '0 8px 16px rgba(0,0,0,0.2)';
-            ghostElement.style.backgroundColor = 'var(--surface)';
+            ghostElement.style.backgroundColor = 'var(--surface, #fff)';
             ghostElement.style.borderRadius = '8px';
-            ghostElement.style.border = '1px solid var(--border)';
+            ghostElement.style.border = '1px solid var(--border, #ccc)';
             document.body.appendChild(ghostElement);
         } else {
-            return; // not enough movement yet
+            return;
         }
     }
     ev.preventDefault();
-    moveGhost(ev);
+    if (ghostElement) {
+        ghostElement.style.left = ev.clientX - (ghostElement.offsetWidth / 2) + 'px';
+        ghostElement.style.top = ev.clientY - (ghostElement.offsetHeight / 2) + 'px';
+    }
+
     const dropTarget = document.elementFromPoint(ev.clientX, ev.clientY);
     document.querySelectorAll('.task-dropzone.drag-over').forEach(el => el.classList.remove('drag-over'));
     if (dropTarget) {
@@ -332,7 +449,6 @@ document.addEventListener('pointermove', ev => {
     }
 });
 
-// End pointer interaction
 document.addEventListener('pointerup', ev => {
     if (ghostElement) { ghostElement.remove(); ghostElement = null; }
     if (isPointerDragging) {
@@ -350,7 +466,6 @@ document.addEventListener('pointerup', ev => {
             }
         }
     }
-    // Reset state
     isPointerDragging = false;
     pointerDragTask = null;
     pointerDragFromKidIndex = null;
